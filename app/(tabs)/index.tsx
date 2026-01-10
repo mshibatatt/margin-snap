@@ -1,17 +1,160 @@
-import { StyleSheet, View } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import * as Haptics from 'expo-haptics';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import {
+  CameraView,
+  PageNumberInput,
+  EmotionStampPicker,
+  MemoInput,
+} from '@/components/capture';
+import { useNotes } from '@/contexts';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
+import { savePhoto } from '@/services/imageService';
+import type { EmotionStamp } from '@/types';
 
 export default function CaptureScreen() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const { createNote } = useNotes();
+
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [pageNumber, setPageNumber] = useState('');
+  const [memo, setMemo] = useState('');
+  const [emotionStamp, setEmotionStamp] = useState<EmotionStamp | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const canSave = photoUri !== null || pageNumber.length > 0;
+
+  const resetForm = useCallback(() => {
+    setPhotoUri(null);
+    setPageNumber('');
+    setMemo('');
+    setEmotionStamp(null);
+  }, []);
+
+  const handleSave = async () => {
+    if (!canSave || isSaving) return;
+
+    try {
+      setIsSaving(true);
+
+      // Save photo to permanent storage if exists
+      let savedPhotoUri: string | null = null;
+      if (photoUri) {
+        savedPhotoUri = savePhoto(photoUri);
+      }
+
+      // Create note
+      createNote({
+        photoUri: savedPhotoUri,
+        pageNumber: pageNumber ? parseInt(pageNumber, 10) : null,
+        memo: memo.trim() || null,
+        emotionStamp,
+      });
+
+      // Success feedback
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      // Reset form
+      resetForm();
+
+      // Show brief success message
+      Alert.alert('保存しました', 'メモが未整理に追加されました', [
+        { text: 'OK' },
+      ]);
+    } catch (error) {
+      console.error('Failed to save note:', error);
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert('エラー', '保存に失敗しました。もう一度お試しください。');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <ThemedView style={styles.container}>
-      <View style={styles.content}>
-        <ThemedText type="title">キャプチャ</ThemedText>
-        <ThemedText style={styles.description}>
-          読書中の気づきを記録します
-        </ThemedText>
-      </View>
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoid}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={100}
+      >
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Camera / Photo Preview */}
+          <View style={styles.cameraContainer}>
+            <CameraView
+              photoUri={photoUri}
+              onPhotoTaken={setPhotoUri}
+              onPhotoRemoved={() => setPhotoUri(null)}
+            />
+          </View>
+
+          {/* Page Number Input */}
+          <View style={styles.section}>
+            <PageNumberInput
+              value={pageNumber}
+              onChange={setPageNumber}
+              placeholder={photoUri ? 'ページ番号（任意）' : 'ページ番号'}
+            />
+          </View>
+
+          {/* Emotion Stamp Picker */}
+          <View style={styles.section}>
+            <EmotionStampPicker
+              value={emotionStamp}
+              onChange={setEmotionStamp}
+            />
+          </View>
+
+          {/* Memo Input */}
+          <View style={styles.section}>
+            <MemoInput value={memo} onChange={setMemo} />
+          </View>
+
+          {/* Validation Message */}
+          {!canSave && (
+            <View style={styles.validationMessage}>
+              <ThemedText style={styles.validationText}>
+                写真またはページ番号を入力してください
+              </ThemedText>
+            </View>
+          )}
+
+          {/* Save Button */}
+          <TouchableOpacity
+            style={[
+              styles.saveButton,
+              {
+                backgroundColor: canSave
+                  ? Colors[colorScheme].tint
+                  : Colors[colorScheme].icon + '40',
+              },
+            ]}
+            onPress={handleSave}
+            disabled={!canSave || isSaving}
+            activeOpacity={0.7}
+          >
+            <ThemedText style={styles.saveButtonText}>
+              {isSaving ? '保存中...' : '保存'}
+            </ThemedText>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </ThemedView>
   );
 }
@@ -20,14 +163,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  content: {
+  keyboardAvoid: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
   },
-  description: {
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 32,
+    gap: 20,
+  },
+  cameraContainer: {
+    alignItems: 'center',
+  },
+  section: {
+    width: '100%',
+  },
+  validationMessage: {
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  validationText: {
+    fontSize: 14,
+    color: '#e74c3c',
+  },
+  saveButton: {
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
     marginTop: 8,
-    opacity: 0.7,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
   },
 });
