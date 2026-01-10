@@ -12,8 +12,15 @@ services:
       - "${SSH_AUTH_SOCK}:/tmp/ssh-agent.sock"
       - "~/.gitconfig:/etc/gitconfig"
       - "/tmp/.X11-unix:/tmp/.X11-unix"
+    ports:
+      - "8081:8081"     # Metro Bundler
+      - "8082:8082"     # Expo Web
+      - "19000:19000"   # Expo DevTools
+      - "19001:19001"   # Expo DevTools
+      - "19002:19002"   # Expo DevTools
     environment:
       SSH_AUTH_SOCK: "/tmp/ssh-agent.sock"
       TERM: "xterm-256color"
       DISPLAY: ${DISPLAY}
+      EXPO_DEVTOOLS_LISTEN_ADDRESS: "0.0.0.0"
     tty: true
