@@ -1,0 +1,53 @@
+FROM ubuntu:24.04
+
+ENV TZ Asia/Tokyo
+ARG UID
+ARG GID
+ARG PROJECT
+ARG TARGETARCH
+ARG USERNAME=neovim
+
+RUN apt-get update && apt-get install -y curl git sudo \
+    language-pack-ja-base language-pack-ja \
+    tmux make gcc ripgrep unzip nodejs npm
+
+# nvim install
+RUN set -eux; \
+  case "${TARGETARCH}" in \
+    "amd64") NVIM_TGZ="nvim-linux-x86_64.tar.gz" ;; \
+    "arm64") NVIM_TGZ="nvim-linux-arm64.tar.gz" ;; \
+    *) echo "Unsupported arch: ${TARGETARCH}" >&2; exit 1 ;; \
+  esac; \
+  curl -fL "https://github.com/neovim/neovim/releases/download/stable/${NVIM_TGZ}" \
+    -o /tmp/nvim.tar.gz; \
+  tar -C /opt -xzf /tmp/nvim.tar.gz; \
+  rm -f /tmp/nvim.tar.gz; \
+  ln -sf /opt/nvim-linux-*/bin/nvim /usr/local/bin/nvim
+
+# update nodejs for claude-code 
+RUN npm install n -g && \
+    n stable && \
+    apt-get purge -y nodejs npm && \
+    apt-get autoremove -y
+RUN npm install -g @anthropic-ai/claude-code
+
+# setup user
+RUN userdel -r ubuntu && \
+    groupadd -g ${GID} ${USERNAME} && \
+    useradd -u ${UID} -g ${GID} -s /bin/bash -m ${USERNAME} && \ 
+    echo "${USERNAME} ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# git auto-completion
+RUN curl -o /home/${USERNAME}/.git-completion.bash https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash && \
+    echo "source ~/.git-completion.bash" >> /home/${USERNAME}/.bashrc
+
+# setup neovim
+COPY --chown=${USERNAME} dotfiles/.config/nvim/init.lua /home/${USERNAME}/.config/nvim/init.lua
+COPY --chown=${USERNAME} dotfiles/.config/nvim/lua/plugins/default.lua /home/${USERNAME}/.config/nvim/lua/plugins/default.lua
+COPY --chown=${USERNAME} dotfiles/.tmux.conf /home/${USERNAME}/.tmux.conf
+RUN echo "alias tmux='tmux -u'" >> /home/${USERNAME}/.bashrc 
+
+USER ${USERNAME}
+WORKDIR /workspaces/${PROJECT}/
+
+RUN nvim --headless "+Lazy! sync" +qa
