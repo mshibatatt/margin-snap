@@ -17,7 +17,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { EmotionStampPicker } from '@/components/capture';
-import { useNotes, useBooks } from '@/contexts';
+import { useNotes, useBooks, useToast } from '@/contexts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { findNoteById } from '@/db';
@@ -29,6 +29,7 @@ export default function NoteDetailScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const { updateNote, deleteNote } = useNotes();
   const { getBookById } = useBooks();
+  const { showSuccess, showError } = useToast();
 
   const [note, setNote] = useState<Note | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -89,7 +90,7 @@ export default function NoteDetailScreen() {
 
     // Validate: must have photo or page number
     if (!note.photoUri && !newPageNumber) {
-      Alert.alert('エラー', '写真またはページ番号が必要です');
+      showError('写真またはページ番号が必要です');
       return;
     }
 
@@ -104,8 +105,9 @@ export default function NoteDetailScreen() {
     setNote(updatedNote);
 
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    showSuccess('メモを更新しました');
     setIsEditing(false);
-  }, [note, editPageNumber, editMemo, editEmotionStamp, updateNote]);
+  }, [note, editPageNumber, editMemo, editEmotionStamp, updateNote, showSuccess, showError]);
 
   const handleAssignBook = useCallback(() => {
     if (note) {

@@ -83,12 +83,16 @@ export default function UnsortedScreen() {
 
   const handleAssignToBook = useCallback(
     (ids: string[]) => {
-      // For now, navigate to a book selection modal
-      // TODO: Implement book selection modal
       if (books.length === 0) {
-        router.push('/book/new?noteIds=' + ids.join(','));
+        router.push({
+          pathname: '/book/new',
+          params: { noteIds: ids.join(',') },
+        });
       } else {
-        router.push('/book/select?noteIds=' + ids.join(','));
+        router.push({
+          pathname: '/book/select',
+          params: { noteIds: ids.join(',') },
+        });
       }
     },
     [books, router]

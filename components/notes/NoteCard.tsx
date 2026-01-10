@@ -1,8 +1,14 @@
-import React from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withDelay,
+} from 'react-native-reanimated';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -17,7 +23,10 @@ interface NoteCardProps {
   onLongPress?: () => void;
   isSelected?: boolean;
   selectionMode?: boolean;
+  index?: number;
 }
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function NoteCard({
   note,
@@ -25,17 +34,45 @@ export function NoteCard({
   onLongPress,
   isSelected = false,
   selectionMode = false,
+  index = 0,
 }: NoteCardProps) {
   const colorScheme = useColorScheme() ?? 'light';
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(20);
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    const delay = Math.min(index * 50, 300);
+    opacity.value = withDelay(delay, withSpring(1, { damping: 20 }));
+    translateY.value = withDelay(delay, withSpring(0, { damping: 20 }));
+  }, [index, opacity, translateY]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
+  }));
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.98, { damping: 15 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, { damping: 15 });
+  };
 
   const formattedDate = format(note.createdAt, 'M/d HH:mm', { locale: ja });
 
   return (
-    <TouchableOpacity
+    <AnimatedPressable
       onPress={onPress}
       onLongPress={onLongPress}
-      activeOpacity={0.7}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       delayLongPress={300}
+      style={animatedStyle}
     >
       <ThemedView
         style={[
@@ -121,7 +158,7 @@ export function NoteCard({
           )}
         </View>
       </ThemedView>
-    </TouchableOpacity>
+    </AnimatedPressable>
   );
 }
 

@@ -14,10 +14,28 @@ type IconSymbolName = keyof typeof MAPPING;
  * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
  */
 const MAPPING = {
+  // Navigation
   'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'chevron.left.forwardslash.chevron.right': 'code',
+
+  // Tab icons
+  'camera.fill': 'camera-alt',
+  'tray.fill': 'inbox',
+  'book.fill': 'menu-book',
+  'book': 'book',
+  'magnifyingglass': 'search',
+
+  // Actions
+  'plus': 'add',
+  'xmark': 'close',
+  'xmark.circle': 'cancel',
+  'checkmark': 'check',
+  'pencil': 'edit',
+  'trash': 'delete-outline',
+  'trash.fill': 'delete',
+  'arrow.counterclockwise': 'refresh',
+  'paperplane.fill': 'send',
 } as IconMapping;
 
 /**

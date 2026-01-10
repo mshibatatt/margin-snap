@@ -4,7 +4,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -13,7 +12,7 @@ import * as Haptics from 'expo-haptics';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useNotes, useBooks } from '@/contexts';
+import { useNotes, useBooks, useToast } from '@/contexts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 
@@ -23,6 +22,7 @@ export default function NewBookScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const { assignToBook } = useNotes();
   const { createBook } = useBooks();
+  const { showSuccess, showError } = useToast();
 
   const [title, setTitle] = useState('');
   const [isCreating, setIsCreating] = useState(false);
@@ -34,7 +34,7 @@ export default function NewBookScreen() {
 
   const handleCreate = useCallback(async () => {
     if (!title.trim()) {
-      Alert.alert('エラー', 'タイトルを入力してください');
+      showError('タイトルを入力してください');
       return;
     }
 
@@ -50,14 +50,15 @@ export default function NewBookScreen() {
       }
 
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      showSuccess('本を作成しました');
       router.back();
     } catch (error) {
       console.error('Failed to create book:', error);
-      Alert.alert('エラー', '本の作成に失敗しました');
+      showError('本の作成に失敗しました');
     } finally {
       setIsCreating(false);
     }
-  }, [title, noteIdArray, createBook, assignToBook, router]);
+  }, [title, noteIdArray, createBook, assignToBook, router, showSuccess, showError]);
 
   return (
     <ThemedView style={styles.container}>

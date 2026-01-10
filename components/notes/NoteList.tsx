@@ -109,13 +109,14 @@ export function NoteList({
   }, [selectedIds, onAssignToBook, cancelSelection]);
 
   const renderItem = useCallback(
-    ({ item }: { item: Note }) => (
+    ({ item, index }: { item: Note; index: number }) => (
       <NoteCard
         note={item}
         onPress={() => handlePress(item)}
         onLongPress={() => handleLongPress(item)}
         isSelected={selectedIds.has(item.id)}
         selectionMode={selectionMode}
+        index={index}
       />
     ),
     [handlePress, handleLongPress, selectedIds, selectionMode]
@@ -174,6 +175,10 @@ export function NoteList({
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListHeaderComponent={ListHeaderComponent}
         showsVerticalScrollIndicator={false}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        removeClippedSubviews={true}
       />
 
       {/* Selection actions */}

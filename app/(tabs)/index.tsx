@@ -4,7 +4,6 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -18,7 +17,7 @@ import {
   EmotionStampPicker,
   MemoInput,
 } from '@/components/capture';
-import { useNotes } from '@/contexts';
+import { useNotes, useToast } from '@/contexts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { savePhoto } from '@/services/imageService';
@@ -27,6 +26,7 @@ import type { EmotionStamp } from '@/types';
 export default function CaptureScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const { createNote } = useNotes();
+  const { showSuccess, showError } = useToast();
 
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [pageNumber, setPageNumber] = useState('');
@@ -49,10 +49,10 @@ export default function CaptureScreen() {
     try {
       setIsSaving(true);
 
-      // Save photo to permanent storage if exists
+      // Save photo to permanent storage if exists (with optimization)
       let savedPhotoUri: string | null = null;
       if (photoUri) {
-        savedPhotoUri = savePhoto(photoUri);
+        savedPhotoUri = await savePhoto(photoUri);
       }
 
       // Create note
@@ -70,13 +70,11 @@ export default function CaptureScreen() {
       resetForm();
 
       // Show brief success message
-      Alert.alert('保存しました', 'メモが未整理に追加されました', [
-        { text: 'OK' },
-      ]);
+      showSuccess('メモを保存しました');
     } catch (error) {
       console.error('Failed to save note:', error);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('エラー', '保存に失敗しました。もう一度お試しください。');
+      showError('保存に失敗しました');
     } finally {
       setIsSaving(false);
     }

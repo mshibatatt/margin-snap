@@ -4,7 +4,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -13,7 +12,7 @@ import * as Haptics from 'expo-haptics';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useBooks } from '@/contexts';
+import { useBooks, useToast } from '@/contexts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { findBookById } from '@/db';
@@ -24,6 +23,7 @@ export default function EditBookScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
   const { updateBook } = useBooks();
+  const { showSuccess, showError } = useToast();
 
   const [book, setBook] = useState<Book | null>(null);
   const [title, setTitle] = useState('');
@@ -43,7 +43,7 @@ export default function EditBookScreen() {
     if (!book) return;
 
     if (!title.trim()) {
-      Alert.alert('エラー', 'タイトルを入力してください');
+      showError('タイトルを入力してください');
       return;
     }
 
@@ -51,14 +51,15 @@ export default function EditBookScreen() {
       setIsSaving(true);
       updateBook(book.id, { title: title.trim() });
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      showSuccess('本を更新しました');
       router.back();
     } catch (error) {
       console.error('Failed to update book:', error);
-      Alert.alert('エラー', '本の更新に失敗しました');
+      showError('本の更新に失敗しました');
     } finally {
       setIsSaving(false);
     }
-  }, [book, title, updateBook, router]);
+  }, [book, title, updateBook, router, showSuccess, showError]);
 
   if (!book) {
     return (
