@@ -2,14 +2,20 @@ import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useNotes } from '@/contexts';
 
-export default function CaptureScreen() {
+export default function UnsortedScreen() {
+  const { notes, isLoading } = useNotes();
+  const unsortedCount = notes.filter((n) => n.bookId === null).length;
+
   return (
     <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <ThemedText type="title">キャプチャ</ThemedText>
+        <ThemedText type="title">未整理</ThemedText>
         <ThemedText style={styles.description}>
-          読書中の気づきを記録します
+          {isLoading
+            ? '読み込み中...'
+            : `${unsortedCount}件の未整理メモ`}
         </ThemedText>
       </View>
     </ThemedView>

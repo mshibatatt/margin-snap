@@ -3,13 +3,13 @@ import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
-export default function CaptureScreen() {
+export default function SearchScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <ThemedText type="title">キャプチャ</ThemedText>
+        <ThemedText type="title">検索</ThemedText>
         <ThemedText style={styles.description}>
-          読書中の気づきを記録します
+          メモを検索・絞り込みます
         </ThemedText>
       </View>
     </ThemedView>
