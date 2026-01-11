@@ -27,6 +27,7 @@ interface NoteListProps {
   onAssignToBook?: (ids: string[]) => void;
   ListHeaderComponent?: React.ReactElement;
   showBookTitle?: boolean;
+  onBookPress?: (bookId: string) => void;
 }
 
 export function NoteList({
@@ -37,6 +38,7 @@ export function NoteList({
   onAssignToBook,
   ListHeaderComponent,
   showBookTitle = false,
+  onBookPress,
 }: NoteListProps) {
   const colorScheme = useColorScheme() ?? 'light';
   const router = useRouter();
@@ -130,9 +132,10 @@ export function NoteList({
         selectionMode={selectionMode}
         index={index}
         bookTitle={showBookTitle && item.bookId ? bookDisplayNameMap.get(item.bookId) : undefined}
+        onBookPress={onBookPress && item.bookId ? () => onBookPress(item.bookId!) : undefined}
       />
     ),
-    [handlePress, handleLongPress, selectedIds, selectionMode, showBookTitle, bookDisplayNameMap]
+    [handlePress, handleLongPress, selectedIds, selectionMode, showBookTitle, bookDisplayNameMap, onBookPress]
   );
 
   const keyExtractor = useCallback((item: Note) => item.id, []);
@@ -188,7 +191,6 @@ export function NoteList({
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListHeaderComponent={ListHeaderComponent}
         showsVerticalScrollIndicator={false}
-        estimatedItemSize={92}
       />
 
       {/* Selection actions */}

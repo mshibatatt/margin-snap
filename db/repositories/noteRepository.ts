@@ -195,9 +195,9 @@ export function findAllNotes(
       conditions.push(`(
         memo LIKE ? OR
         CAST(page_number AS TEXT) LIKE ? OR
-        book_id IN (SELECT id FROM books WHERE title LIKE ?)
+        book_id IN (SELECT id FROM books WHERE title LIKE ? OR author LIKE ?)
       )`);
-      values.push(searchTerm, searchTerm, searchTerm);
+      values.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
   }
 

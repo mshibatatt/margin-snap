@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View, Pressable, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
@@ -25,6 +25,7 @@ interface NoteCardProps {
   selectionMode?: boolean;
   index?: number;
   bookTitle?: string;
+  onBookPress?: () => void;
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -37,6 +38,7 @@ export function NoteCard({
   selectionMode = false,
   index = 0,
   bookTitle,
+  onBookPress,
 }: NoteCardProps) {
   const colorScheme = useColorScheme() ?? 'light';
   const opacity = useSharedValue(0);
@@ -156,7 +158,12 @@ export function NoteCard({
 
           {/* Book title */}
           {bookTitle && (
-            <View style={styles.bookRow}>
+            <TouchableOpacity
+              style={styles.bookRow}
+              onPress={onBookPress}
+              disabled={!onBookPress}
+              activeOpacity={onBookPress ? 0.6 : 1}
+            >
               <IconSymbol
                 name="book.fill"
                 size={12}
@@ -165,7 +172,14 @@ export function NoteCard({
               <ThemedText style={styles.bookTitle} numberOfLines={1}>
                 {bookTitle}
               </ThemedText>
-            </View>
+              {onBookPress && (
+                <IconSymbol
+                  name="chevron.right"
+                  size={12}
+                  color={Colors[colorScheme].icon}
+                />
+              )}
+            </TouchableOpacity>
           )}
 
           {/* No content indicator */}

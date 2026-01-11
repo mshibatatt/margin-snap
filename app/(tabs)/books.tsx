@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 
 import { ThemedText } from '@/components/themed-text';
@@ -22,7 +22,14 @@ import type { BookWithNoteCount } from '@/types';
 export default function BooksScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const router = useRouter();
-  const { books, isLoading, deleteBook } = useBooks();
+  const { books, isLoading, deleteBook, refresh } = useBooks();
+
+  // Refresh books when screen gains focus (e.g., returning from note assignment)
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+    }, [refresh])
+  );
 
   const handleBookPress = useCallback(
     (book: BookWithNoteCount) => {

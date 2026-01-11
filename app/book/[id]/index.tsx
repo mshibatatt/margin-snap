@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
 
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { NoteList, FilterBar } from '@/components/notes';
+import { FloatingCaptureButton } from '@/components/ui/floating-capture-button';
 import { useNotes, useBooks } from '@/contexts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
@@ -16,7 +17,7 @@ export default function BookDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme() ?? 'light';
   const router = useRouter();
-  const { notes, isLoading, deleteNotes } = useNotes();
+  const { notes, isLoading, deleteNotes, refresh: refreshNotes } = useNotes();
   const { refresh: refreshBooks } = useBooks();
 
   const [book, setBook] = useState<Book | null>(null);
@@ -26,12 +27,16 @@ export default function BookDetailScreen() {
   const [emotionStamps, setEmotionStamps] = useState<EmotionStamp[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
 
-  useEffect(() => {
-    if (id) {
-      const foundBook = findBookById(id);
-      setBook(foundBook);
-    }
-  }, [id]);
+  // Refresh data when screen gains focus
+  useFocusEffect(
+    useCallback(() => {
+      if (id) {
+        const foundBook = findBookById(id);
+        setBook(foundBook);
+      }
+      refreshNotes();
+    }, [id, refreshNotes])
+  );
 
   // Filter notes to this book only
   const filteredNotes = useMemo(() => {
@@ -165,6 +170,9 @@ export default function BookDetailScreen() {
         onAssignToBook={handleAssignToBook}
         ListHeaderComponent={ListHeader}
       />
+
+      {/* Floating capture button */}
+      <FloatingCaptureButton />
     </ThemedView>
   );
 }

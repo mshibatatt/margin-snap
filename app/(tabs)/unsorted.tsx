@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
@@ -13,8 +13,16 @@ import type { DateFilter, EmotionStamp, SortOrder } from '@/types';
 export default function UnsortedScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const router = useRouter();
-  const { notes, isLoading, deleteNotes } = useNotes();
-  const { books } = useBooks();
+  const { notes, isLoading, deleteNotes, refresh: refreshNotes } = useNotes();
+  const { books, refresh: refreshBooks } = useBooks();
+
+  // Refresh data when screen gains focus
+  useFocusEffect(
+    useCallback(() => {
+      refreshNotes();
+      refreshBooks();
+    }, [refreshNotes, refreshBooks])
+  );
 
   // Local filter state (unsorted only, so no status filter needed)
   const [dateFilter, setDateFilter] = useState<DateFilter>('all');

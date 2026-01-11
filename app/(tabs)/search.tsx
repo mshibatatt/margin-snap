@@ -24,11 +24,14 @@ export default function SearchScreen() {
   const [emotionStamps, setEmotionStamps] = useState<EmotionStamp[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
 
-  // Create a map of book titles for search
-  const bookTitleMap = useMemo(() => {
-    const map = new Map<string, string>();
+  // Create a map of book info for search (title + author)
+  const bookSearchMap = useMemo(() => {
+    const map = new Map<string, { title: string; author: string | null }>();
     books.forEach((book) => {
-      map.set(book.id, book.title.toLowerCase());
+      map.set(book.id, {
+        title: book.title.toLowerCase(),
+        author: book.author?.toLowerCase() ?? null,
+      });
     });
     return map;
   }, [books]);
@@ -49,11 +52,16 @@ export default function SearchScreen() {
         if (note.pageNumber !== null && note.pageNumber.toString().includes(query)) {
           return true;
         }
-        // Search in book title
+        // Search in book title and author
         if (note.bookId) {
-          const bookTitle = bookTitleMap.get(note.bookId);
-          if (bookTitle && bookTitle.includes(query)) {
-            return true;
+          const bookInfo = bookSearchMap.get(note.bookId);
+          if (bookInfo) {
+            if (bookInfo.title.includes(query)) {
+              return true;
+            }
+            if (bookInfo.author && bookInfo.author.includes(query)) {
+              return true;
+            }
           }
         }
         return false;
@@ -116,7 +124,7 @@ export default function SearchScreen() {
     });
 
     return result;
-  }, [notes, searchQuery, dateFilter, statusFilter, emotionStamps, sortOrder, bookTitleMap]);
+  }, [notes, searchQuery, dateFilter, statusFilter, emotionStamps, sortOrder, bookSearchMap]);
 
   const handleDeleteNotes = useCallback(
     (ids: string[]) => {
@@ -128,6 +136,13 @@ export default function SearchScreen() {
   const handleAssignToBook = useCallback(
     (ids: string[]) => {
       router.push(`/book/select?noteIds=${ids.join(',')}`);
+    },
+    [router]
+  );
+
+  const handleBookPress = useCallback(
+    (bookId: string) => {
+      router.push(`/book/${bookId}`);
     },
     [router]
   );
@@ -152,7 +167,7 @@ export default function SearchScreen() {
       <SearchBar
         value={searchQuery}
         onChangeText={setSearchQuery}
-        placeholder="メモ、ページ番号、本タイトルを検索..."
+        placeholder="メモ、ページ番号、本タイトル、著者名を検索..."
       />
 
       {/* Filter bar */}
@@ -208,6 +223,7 @@ export default function SearchScreen() {
         onAssignToBook={handleAssignToBook}
         ListHeaderComponent={ListHeader}
         showBookTitle
+        onBookPress={handleBookPress}
       />
     </ThemedView>
   );

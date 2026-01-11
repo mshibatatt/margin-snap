@@ -16,6 +16,7 @@ import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { FloatingCaptureButton } from '@/components/ui/floating-capture-button';
 import { EmotionStampPicker } from '@/components/capture';
 import { useNotes, useBooks, useToast } from '@/contexts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -116,6 +117,12 @@ export default function NoteDetailScreen() {
   const handleAssignBook = useCallback(() => {
     if (note) {
       router.push(`/book/select?noteIds=${note.id}`);
+    }
+  }, [note, router]);
+
+  const handleViewBook = useCallback(() => {
+    if (note?.bookId) {
+      router.push(`/book/${note.bookId}`);
     }
   }, [note, router]);
 
@@ -245,27 +252,71 @@ export default function NoteDetailScreen() {
         {!isEditing && (
           <View style={styles.section}>
             <ThemedText style={styles.sectionLabel}>本</ThemedText>
-            <TouchableOpacity
-              style={[
-                styles.bookButton,
-                { borderColor: Colors[colorScheme].icon + '40' },
-              ]}
-              onPress={handleAssignBook}
-            >
-              <IconSymbol
-                name="book.fill"
-                size={20}
-                color={book ? Colors[colorScheme].tint : Colors[colorScheme].icon}
-              />
-              <ThemedText style={styles.bookText}>
-                {book ? getBookDisplayName(book) : '本に割り当てる'}
-              </ThemedText>
-              <IconSymbol
-                name="chevron.right"
-                size={16}
-                color={Colors[colorScheme].icon}
-              />
-            </TouchableOpacity>
+            {book ? (
+              <View
+                style={[
+                  styles.bookContainer,
+                  { borderColor: Colors[colorScheme].icon + '40' },
+                ]}
+              >
+                {/* Book info - tappable to view book detail */}
+                <TouchableOpacity
+                  style={styles.bookInfo}
+                  onPress={handleViewBook}
+                >
+                  <IconSymbol
+                    name="book.fill"
+                    size={20}
+                    color={Colors[colorScheme].tint}
+                  />
+                  <ThemedText style={styles.bookText} numberOfLines={1}>
+                    {getBookDisplayName(book)}
+                  </ThemedText>
+                  <IconSymbol
+                    name="chevron.right"
+                    size={16}
+                    color={Colors[colorScheme].icon}
+                  />
+                </TouchableOpacity>
+
+                {/* Divider */}
+                <View style={[styles.bookDivider, { backgroundColor: Colors[colorScheme].icon + '30' }]} />
+
+                {/* Change button */}
+                <TouchableOpacity
+                  style={styles.bookChangeButton}
+                  onPress={handleAssignBook}
+                >
+                  <IconSymbol
+                    name="pencil"
+                    size={18}
+                    color={Colors[colorScheme].icon}
+                  />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={[
+                  styles.bookButton,
+                  { borderColor: Colors[colorScheme].icon + '40' },
+                ]}
+                onPress={handleAssignBook}
+              >
+                <IconSymbol
+                  name="book.fill"
+                  size={20}
+                  color={Colors[colorScheme].icon}
+                />
+                <ThemedText style={styles.bookText}>
+                  本に割り当てる
+                </ThemedText>
+                <IconSymbol
+                  name="chevron.right"
+                  size={16}
+                  color={Colors[colorScheme].icon}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         )}
 
@@ -275,6 +326,9 @@ export default function NoteDetailScreen() {
           <ThemedText style={styles.value}>{formattedDate}</ThemedText>
         </View>
       </ScrollView>
+
+      {/* Floating capture button */}
+      <FloatingCaptureButton />
     </ThemedView>
   );
 }
@@ -352,6 +406,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  bookContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  bookInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  bookDivider: {
+    width: 1,
+    height: '60%',
+  },
+  bookChangeButton: {
+    paddingHorizontal: 14,
     paddingVertical: 12,
   },
   bookText: {
