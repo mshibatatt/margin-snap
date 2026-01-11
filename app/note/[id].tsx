@@ -99,14 +99,14 @@ export default function NoteDetailScreen() {
       return;
     }
 
-    updateNote(note.id, {
+    // updateNote returns the updated note directly
+    const updatedNote = updateNote(note.id, {
       pageNumber: newPageNumber,
       memo: editMemo.trim() || null,
       emotionStamp: editEmotionStamp,
     });
 
-    // Refresh note data
-    const updatedNote = findNoteById(note.id);
+    // Update local state with the returned note
     setNote(updatedNote);
 
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -162,7 +162,7 @@ export default function NoteDetailScreen() {
                   <IconSymbol name="pencil" size={20} color={Colors[colorScheme].tint} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleDelete} style={styles.headerButton}>
-                  <IconSymbol name="trash" size={20} color="#e74c3c" />
+                  <IconSymbol name="trash" size={20} color={Colors[colorScheme].error} />
                 </TouchableOpacity>
               </View>
             ),
@@ -208,7 +208,7 @@ export default function NoteDetailScreen() {
 
         {/* Emotion stamp */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionLabel}>感情</ThemedText>
+          <ThemedText style={styles.sectionLabel}>スタンプ</ThemedText>
           {isEditing ? (
             <EmotionStampPicker
               value={editEmotionStamp}

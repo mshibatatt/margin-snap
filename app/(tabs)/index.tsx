@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
 import { ThemedText } from '@/components/themed-text';
@@ -19,12 +20,13 @@ import {
 } from '@/components/capture';
 import { useNotes, useToast } from '@/contexts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing, Components } from '@/constants/theme';
 import { savePhoto } from '@/services/imageService';
 import type { EmotionStamp } from '@/types';
 
 export default function CaptureScreen() {
   const colorScheme = useColorScheme() ?? 'light';
+  const insets = useSafeAreaInsets();
   const { createNote } = useNotes();
   const { showSuccess, showError } = useToast();
 
@@ -123,17 +125,28 @@ export default function CaptureScreen() {
           <View style={styles.section}>
             <MemoInput value={memo} onChange={setMemo} />
           </View>
+        </ScrollView>
 
+        {/* Fixed Save Button at Bottom */}
+        <View
+          style={[
+            styles.saveButtonContainer,
+            {
+              paddingBottom: Math.max(insets.bottom, Spacing.md),
+              borderTopColor: Colors[colorScheme].border,
+              backgroundColor: Colors[colorScheme].surface,
+            },
+          ]}
+        >
           {/* Validation Message */}
           {!canSave && (
             <View style={styles.validationMessage}>
-              <ThemedText style={styles.validationText}>
+              <ThemedText type="bodySmall" style={{ color: Colors[colorScheme].error }}>
                 写真またはページ番号を入力してください
               </ThemedText>
             </View>
           )}
 
-          {/* Save Button */}
           <TouchableOpacity
             style={[
               styles.saveButton,
@@ -151,7 +164,7 @@ export default function CaptureScreen() {
               {isSaving ? '保存中...' : '保存'}
             </ThemedText>
           </TouchableOpacity>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </ThemedView>
   );
@@ -168,9 +181,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 16,
-    paddingBottom: 32,
-    gap: 20,
+    padding: Spacing.md,
+    paddingBottom: Spacing.md,
+    gap: Spacing.lg,
   },
   cameraContainer: {
     alignItems: 'center',
@@ -178,23 +191,24 @@ const styles = StyleSheet.create({
   section: {
     width: '100%',
   },
+  saveButtonContainer: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
   validationMessage: {
     alignItems: 'center',
-    paddingVertical: 8,
-  },
-  validationText: {
-    fontSize: 14,
-    color: '#e74c3c',
+    paddingBottom: Spacing.sm,
   },
   saveButton: {
-    paddingVertical: 16,
-    borderRadius: 12,
+    height: Components.button.height,
+    borderRadius: Components.button.borderRadius,
     alignItems: 'center',
-    marginTop: 8,
+    justifyContent: 'center',
   },
   saveButtonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
   },
 });

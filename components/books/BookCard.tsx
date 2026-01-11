@@ -8,7 +8,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing, Components } from '@/constants/theme';
 import { getBookDisplayName } from '@/utils/bookDisplayName';
 import type { BookWithNoteCount } from '@/types';
 
@@ -33,7 +33,10 @@ export function BookCard({ book, onPress, onLongPress }: BookCardProps) {
       <ThemedView
         style={[
           styles.container,
-          { borderColor: Colors[colorScheme].icon + '20' },
+          {
+            borderColor: Colors[colorScheme].border,
+            backgroundColor: Colors[colorScheme].surface,
+          },
         ]}
       >
         {/* Book cover */}
@@ -60,19 +63,19 @@ export function BookCard({ book, onPress, onLongPress }: BookCardProps) {
 
         {/* Book info */}
         <View style={styles.info}>
-          <ThemedText style={styles.title} numberOfLines={2}>
+          <ThemedText type="h3" numberOfLines={2}>
             {getBookDisplayName(book)}
           </ThemedText>
           {book.author && (
-            <ThemedText style={styles.author} numberOfLines={1}>
+            <ThemedText type="bodySmall" secondary numberOfLines={1}>
               {book.author}
             </ThemedText>
           )}
           <View style={styles.meta}>
-            <ThemedText style={styles.noteCount}>
+            <ThemedText type="caption" secondary>
               {book.noteCount}件のメモ
             </ThemedText>
-            <ThemedText style={styles.date}>更新: {formattedDate}</ThemedText>
+            <ThemedText type="caption" secondary>更新: {formattedDate}</ThemedText>
           </View>
         </View>
 
@@ -92,9 +95,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 12,
-    padding: 12,
-    gap: 12,
+    borderRadius: Components.card.borderRadius,
+    padding: Components.card.padding,
+    gap: Spacing.md,
   },
   cover: {
     width: 56,
@@ -110,27 +113,12 @@ const styles = StyleSheet.create({
   },
   info: {
     flex: 1,
-    gap: 4,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  author: {
-    fontSize: 13,
-    opacity: 0.6,
+    gap: Spacing.xs,
   },
   meta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-  },
-  noteCount: {
-    fontSize: 13,
-    opacity: 0.6,
-  },
-  date: {
-    fontSize: 12,
-    opacity: 0.4,
+    gap: Spacing.md,
+    marginTop: Spacing.xs,
   },
 });

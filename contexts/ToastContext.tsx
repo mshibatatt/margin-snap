@@ -8,6 +8,8 @@ import {
   Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors } from '@/constants/theme';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -42,6 +44,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const translateY = useRef(new Animated.Value(-20)).current;
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme() ?? 'light';
 
   const hideToast = useCallback(() => {
     Animated.parallel([
@@ -108,12 +111,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const getBackgroundColor = (type: ToastType) => {
     switch (type) {
       case 'success':
-        return '#27ae60';
+        return Colors[colorScheme].success;
       case 'error':
-        return '#e74c3c';
+        return Colors[colorScheme].error;
       case 'info':
       default:
-        return '#3498db';
+        return Colors[colorScheme].tint;
     }
   };
 

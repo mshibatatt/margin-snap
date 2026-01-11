@@ -11,7 +11,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing, Components } from '@/constants/theme';
 
 interface PageNumberInputProps {
   value: string;
@@ -53,19 +53,19 @@ export function PageNumberInput({
       <View
         style={[
           styles.display,
-          { borderColor: Colors[colorScheme].icon + '40' },
+          { borderColor: Colors[colorScheme].border },
         ]}
       >
         <TextInput
           style={[styles.displayText, { color: Colors[colorScheme].text }]}
           value={value}
           placeholder={placeholder}
-          placeholderTextColor={Colors[colorScheme].icon}
+          placeholderTextColor={Colors[colorScheme].textSecondary}
           editable={false}
           keyboardType="number-pad"
         />
         {value.length > 0 && (
-          <ThemedText style={styles.pageLabel}>ページ</ThemedText>
+          <ThemedText type="bodySmall" secondary>ページ</ThemedText>
         )}
       </View>
 
@@ -80,7 +80,7 @@ export function PageNumberInput({
                   {
                     backgroundColor:
                       key === 'clear' || key === 'delete'
-                        ? Colors[colorScheme].background
+                        ? Colors[colorScheme].surface
                         : Colors[colorScheme].tint + '15',
                   },
                 ]}
@@ -109,17 +109,17 @@ export function PageNumberInput({
 
 const styles = StyleSheet.create({
   container: {
-    gap: 12,
+    gap: Spacing.md,
   },
   display: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
+    borderRadius: Components.card.borderRadius,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    gap: Spacing.sm,
   },
   displayText: {
     fontSize: 32,
@@ -127,22 +127,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     minWidth: 100,
   },
-  pageLabel: {
-    fontSize: 16,
-    opacity: 0.6,
-  },
   keypad: {
-    gap: 8,
+    gap: Spacing.sm,
   },
   keypadRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 8,
+    gap: Spacing.sm,
   },
   key: {
     width: 72,
-    height: 48,
-    borderRadius: 8,
+    height: Components.button.height,
+    borderRadius: Components.input.borderRadius,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -153,6 +149,5 @@ const styles = StyleSheet.create({
   keyTextSmall: {
     fontSize: 18,
     fontWeight: '600',
-    opacity: 0.7,
   },
 });

@@ -198,7 +198,10 @@ export function NoteList({
         <View
           style={[
             styles.actionBar,
-            { backgroundColor: Colors[colorScheme].background },
+            {
+              backgroundColor: Colors[colorScheme].surface,
+              borderTopColor: Colors[colorScheme].border,
+            },
           ]}
         >
           {onAssignToBook && (
@@ -213,7 +216,7 @@ export function NoteList({
 
           {onDeleteNotes && (
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: '#e74c3c' }]}
+              style={[styles.actionButton, { backgroundColor: Colors[colorScheme].error }]}
               onPress={handleDelete}
             >
               <IconSymbol name="trash.fill" size={20} color="#fff" />
@@ -285,7 +288,6 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 12,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(0,0,0,0.1)',
   },
   actionButton: {
     flex: 1,

@@ -128,7 +128,7 @@ export default function BookDetailScreen() {
   const ListHeader = (
     <View style={styles.header}>
       {/* Book info section for full title display */}
-      <View style={styles.bookInfo}>
+      <View style={[styles.bookInfo, { borderBottomColor: Colors[colorScheme].border }]}>
         <ThemedText style={styles.bookTitle}>
           {getBookDisplayName(book)}
         </ThemedText>
@@ -198,7 +198,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.1)',
   },
   bookTitle: {
     fontSize: 20,

@@ -155,7 +155,7 @@ export function FilterBar({
 
       {/* Emotion stamps */}
       <View style={styles.section}>
-        <ThemedText style={styles.sectionLabel}>感情</ThemedText>
+        <ThemedText style={styles.sectionLabel}>スタンプ</ThemedText>
         <View style={styles.chipRow}>
           {EMOTION_STAMPS.map((stamp) => (
             <TouchableOpacity

@@ -28,7 +28,7 @@ export function EmotionStampPicker({ value, onChange }: EmotionStampPickerProps)
 
   return (
     <View style={styles.container}>
-      <ThemedText style={styles.label}>感情</ThemedText>
+      <ThemedText style={styles.label}>スタンプ</ThemedText>
       <View style={styles.stamps}>
         {EMOTION_STAMPS.map((stamp) => (
           <TouchableOpacity

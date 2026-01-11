@@ -14,7 +14,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing, Components } from '@/constants/theme';
 import type { Note } from '@/types';
 
 interface NoteCardProps {
@@ -84,10 +84,10 @@ export function NoteCard({
           {
             borderColor: isSelected
               ? Colors[colorScheme].tint
-              : Colors[colorScheme].icon + '20',
+              : Colors[colorScheme].border,
             backgroundColor: isSelected
               ? Colors[colorScheme].tint + '10'
-              : Colors[colorScheme].background,
+              : Colors[colorScheme].surface,
           },
         ]}
       >
@@ -146,12 +146,12 @@ export function NoteCard({
             <View style={styles.spacer} />
 
             {/* Date */}
-            <ThemedText style={styles.date}>{formattedDate}</ThemedText>
+            <ThemedText type="caption" secondary>{formattedDate}</ThemedText>
           </View>
 
           {/* Memo text */}
           {note.memo && (
-            <ThemedText style={styles.memo} numberOfLines={1}>
+            <ThemedText type="bodySmall" secondary numberOfLines={1}>
               {note.memo}
             </ThemedText>
           )}
@@ -169,7 +169,7 @@ export function NoteCard({
                 size={12}
                 color={Colors[colorScheme].tint}
               />
-              <ThemedText style={styles.bookTitle} numberOfLines={1}>
+              <ThemedText type="caption" secondary numberOfLines={1} style={styles.bookTitle}>
                 {bookTitle}
               </ThemedText>
               {onBookPress && (
@@ -184,7 +184,7 @@ export function NoteCard({
 
           {/* No content indicator */}
           {!note.pageNumber && !note.memo && !note.emotionStamp && !bookTitle && (
-            <ThemedText style={styles.noContent}>写真のみ</ThemedText>
+            <ThemedText type="caption" secondary style={styles.noContent}>写真のみ</ThemedText>
           )}
         </View>
       </ThemedView>
@@ -196,13 +196,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: Components.card.borderRadius,
     overflow: 'hidden',
     minHeight: 80,
   },
   checkbox: {
     justifyContent: 'center',
-    paddingLeft: 12,
+    paddingLeft: Spacing.md,
   },
   checkboxInner: {
     width: 24,
@@ -218,18 +218,18 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 12,
+    padding: Spacing.md,
     justifyContent: 'center',
-    gap: 6,
+    gap: Spacing.xs + 2,
   },
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: Spacing.sm,
   },
   pageContainer: {
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     borderRadius: 4,
   },
@@ -243,27 +243,15 @@ const styles = StyleSheet.create({
   spacer: {
     flex: 1,
   },
-  date: {
-    fontSize: 12,
-    opacity: 0.5,
-  },
-  memo: {
-    fontSize: 14,
-    opacity: 0.8,
-  },
   bookRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: Spacing.xs,
   },
   bookTitle: {
-    fontSize: 12,
-    opacity: 0.6,
     flex: 1,
   },
   noContent: {
-    fontSize: 13,
-    opacity: 0.4,
     fontStyle: 'italic',
   },
 });
