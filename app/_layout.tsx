@@ -7,10 +7,6 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { NotesProvider, BooksProvider, ToastProvider } from '@/contexts';
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
@@ -20,9 +16,10 @@ export default function RootLayout() {
         <BooksProvider>
           <NotesProvider>
             <ToastProvider>
-              <Stack>
+              <Stack screenOptions={{ headerShown: true }}>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+                <Stack.Screen name="book" options={{ headerShown: false }} />
+                <Stack.Screen name="note" />
               </Stack>
               <StatusBar style="auto" />
             </ToastProvider>

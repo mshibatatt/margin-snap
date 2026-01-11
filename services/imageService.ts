@@ -1,5 +1,5 @@
 import { Paths, Directory, File } from 'expo-file-system';
-import { v4 as uuidv4 } from 'uuid';
+import { generateId } from '../utils/generateId';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const MAX_IMAGE_WIDTH = 1920;
@@ -10,9 +10,16 @@ function getImagesDirectory(): Directory {
 }
 
 function ensureDirectoryExists(): void {
-  const dir = getImagesDirectory();
-  if (!dir.exists) {
-    dir.create();
+  // Create parent directory first (images)
+  const imagesDir = new Directory(Paths.document, 'images');
+  if (!imagesDir.exists) {
+    imagesDir.create();
+  }
+
+  // Then create subdirectory (notes)
+  const notesDir = new Directory(imagesDir, 'notes');
+  if (!notesDir.exists) {
+    notesDir.create();
   }
 }
 
@@ -29,7 +36,7 @@ export async function savePhoto(sourceUri: string): Promise<string> {
     }
   );
 
-  const filename = `${uuidv4()}-${Date.now()}.jpg`;
+  const filename = `${generateId()}.jpg`;
   const sourceFile = new File(optimizedImage.uri);
   const destinationFile = new File(getImagesDirectory(), filename);
 

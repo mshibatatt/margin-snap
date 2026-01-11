@@ -68,7 +68,6 @@ export default function NewBookScreen() {
           presentation: 'modal',
         }}
       />
-
       <KeyboardAvoidingView
         style={styles.keyboardAvoid}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -95,7 +94,6 @@ export default function NewBookScreen() {
               onChangeText={setTitle}
               placeholder="本のタイトルを入力..."
               placeholderTextColor={Colors[colorScheme].icon}
-              autoFocus
               returnKeyType="done"
               onSubmitEditing={handleCreate}
             />

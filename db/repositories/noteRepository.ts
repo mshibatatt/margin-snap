@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { generateId } from '../../utils/generateId';
 import { getDatabase } from '../schema';
 import type {
   Note,
@@ -44,7 +44,7 @@ export function createNote(input: CreateNoteInput): Note {
   validateNoteInput(input);
 
   const db = getDatabase();
-  const id = uuidv4();
+  const id = generateId();
   const now = Date.now();
 
   db.runSync(

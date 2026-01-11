@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { generateId } from '../../utils/generateId';
 import { getDatabase } from '../schema';
 import type {
   Book,
@@ -42,7 +42,7 @@ export function createBook(input: CreateBookInput): Book {
   }
 
   const db = getDatabase();
-  const id = uuidv4();
+  const id = generateId();
   const now = Date.now();
 
   db.runSync(

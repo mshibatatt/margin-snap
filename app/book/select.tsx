@@ -79,7 +79,6 @@ export default function BookSelectScreen() {
           presentation: 'modal',
         }}
       />
-
       <View style={styles.header}>
         <ThemedText style={styles.headerText}>
           {noteIdArray.length}件のメモを割り当てる本を選択
