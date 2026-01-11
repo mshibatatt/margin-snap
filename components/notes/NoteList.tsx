@@ -127,7 +127,7 @@ export function NoteList({
   if (notes.length === 0) {
     return (
       <ThemedView style={styles.emptyContainer}>
-        {ListHeaderComponent}
+        <View style={styles.emptyHeader}>{ListHeaderComponent}</View>
         <View style={styles.emptyContent}>
           <IconSymbol
             name={emptyIcon as any}
@@ -220,6 +220,10 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
+  },
+  emptyHeader: {
+    padding: 16,
+    paddingBottom: 0,
   },
   emptyContent: {
     flex: 1,
