@@ -5,7 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
 
@@ -73,12 +73,6 @@ export default function BookSelectScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: '本を選択',
-          presentation: 'modal',
-        }}
-      />
       <View style={styles.header}>
         <ThemedText style={styles.headerText}>
           {noteIdArray.length}件のメモを割り当てる本を選択

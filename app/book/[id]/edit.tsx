@@ -7,7 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 
 import { ThemedText } from '@/components/themed-text';
@@ -64,7 +64,6 @@ export default function EditBookScreen() {
   if (!book) {
     return (
       <ThemedView style={styles.container}>
-        <Stack.Screen options={{ title: '編集' }} />
         <View style={styles.notFound}>
           <ThemedText>本が見つかりません</ThemedText>
         </View>
@@ -76,13 +75,6 @@ export default function EditBookScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: '本を編集',
-          presentation: 'modal',
-        }}
-      />
-
       <KeyboardAvoidingView
         style={styles.keyboardAvoid}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

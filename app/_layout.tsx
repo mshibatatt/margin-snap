@@ -19,7 +19,7 @@ export default function RootLayout() {
               <Stack screenOptions={{ headerShown: true }}>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="book" options={{ headerShown: false }} />
-                <Stack.Screen name="note" />
+                <Stack.Screen name="note" options={{ headerShown: false }} />
               </Stack>
               <StatusBar style="auto" />
             </ToastProvider>
