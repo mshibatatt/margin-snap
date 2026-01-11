@@ -25,6 +25,7 @@ export default function NewBookScreen() {
   const { showSuccess, showError } = useToast();
 
   const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
   const noteIdArray = useMemo(
@@ -42,7 +43,10 @@ export default function NewBookScreen() {
       setIsCreating(true);
 
       // Create the book
-      const book = createBook({ title: title.trim() });
+      const book = createBook({
+        title: title.trim(),
+        author: author.trim() || null,
+      });
 
       // Assign notes if any
       if (noteIdArray.length > 0) {
@@ -87,6 +91,25 @@ export default function NewBookScreen() {
               value={title}
               onChangeText={setTitle}
               placeholder="本のタイトルを入力..."
+              placeholderTextColor={Colors[colorScheme].icon}
+              returnKeyType="next"
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <ThemedText style={styles.label}>著者（任意）</ThemedText>
+            <TextInput
+              style={[
+                styles.input,
+                {
+                  color: Colors[colorScheme].text,
+                  backgroundColor: Colors[colorScheme].background,
+                  borderColor: Colors[colorScheme].icon + '40',
+                },
+              ]}
+              value={author}
+              onChangeText={setAuthor}
+              placeholder="著者名を入力..."
               placeholderTextColor={Colors[colorScheme].icon}
               returnKeyType="done"
               onSubmitEditing={handleCreate}

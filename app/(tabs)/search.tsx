@@ -207,6 +207,7 @@ export default function SearchScreen() {
         onDeleteNotes={handleDeleteNotes}
         onAssignToBook={handleAssignToBook}
         ListHeaderComponent={ListHeader}
+        showBookTitle
       />
     </ThemedView>
   );

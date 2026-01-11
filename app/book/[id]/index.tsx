@@ -121,6 +121,13 @@ export default function BookDetailScreen() {
 
   const ListHeader = (
     <View style={styles.header}>
+      {/* Book info section for full title display */}
+      <View style={styles.bookInfo}>
+        <ThemedText style={styles.bookTitle}>{book.title}</ThemedText>
+        {book.author && (
+          <ThemedText style={styles.bookAuthor}>{book.author}</ThemedText>
+        )}
+      </View>
       <ThemedText style={styles.headerTitle}>
         {filteredNotes.length}件のメモ
       </ThemedText>
@@ -142,7 +149,7 @@ export default function BookDetailScreen() {
     <ThemedView style={styles.container}>
       <Stack.Screen
         options={{
-          title: book.title,
+          title: '',
           headerRight: () => null,
         }}
       />
@@ -175,6 +182,22 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 16,
+  },
+  bookInfo: {
+    marginBottom: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+  },
+  bookTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    lineHeight: 28,
+  },
+  bookAuthor: {
+    fontSize: 15,
+    opacity: 0.6,
+    marginTop: 4,
   },
   headerTitle: {
     fontSize: 15,

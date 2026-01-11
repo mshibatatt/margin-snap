@@ -24,6 +24,7 @@ interface NoteCardProps {
   isSelected?: boolean;
   selectionMode?: boolean;
   index?: number;
+  bookTitle?: string;
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -35,6 +36,7 @@ export function NoteCard({
   isSelected = false,
   selectionMode = false,
   index = 0,
+  bookTitle,
 }: NoteCardProps) {
   const colorScheme = useColorScheme() ?? 'light';
   const opacity = useSharedValue(0);
@@ -152,8 +154,22 @@ export function NoteCard({
             </ThemedText>
           )}
 
+          {/* Book title */}
+          {bookTitle && (
+            <View style={styles.bookRow}>
+              <IconSymbol
+                name="book.fill"
+                size={12}
+                color={Colors[colorScheme].tint}
+              />
+              <ThemedText style={styles.bookTitle} numberOfLines={1}>
+                {bookTitle}
+              </ThemedText>
+            </View>
+          )}
+
           {/* No content indicator */}
-          {!note.pageNumber && !note.memo && !note.emotionStamp && (
+          {!note.pageNumber && !note.memo && !note.emotionStamp && !bookTitle && (
             <ThemedText style={styles.noContent}>写真のみ</ThemedText>
           )}
         </View>
@@ -220,6 +236,16 @@ const styles = StyleSheet.create({
   memo: {
     fontSize: 14,
     opacity: 0.8,
+  },
+  bookRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  bookTitle: {
+    fontSize: 12,
+    opacity: 0.6,
+    flex: 1,
   },
   noContent: {
     fontSize: 13,

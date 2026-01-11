@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   StyleSheet,
   View,
-  FlatList,
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 
@@ -14,6 +14,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useBooks } from '@/contexts';
 import { Colors } from '@/constants/theme';
 import type { Note } from '@/types';
 
@@ -24,6 +25,7 @@ interface NoteListProps {
   onDeleteNotes?: (ids: string[]) => void;
   onAssignToBook?: (ids: string[]) => void;
   ListHeaderComponent?: React.ReactElement;
+  showBookTitle?: boolean;
 }
 
 export function NoteList({
@@ -33,11 +35,20 @@ export function NoteList({
   onDeleteNotes,
   onAssignToBook,
   ListHeaderComponent,
+  showBookTitle = false,
 }: NoteListProps) {
   const colorScheme = useColorScheme() ?? 'light';
   const router = useRouter();
+  const { books } = useBooks();
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  // Create a lookup map for book titles
+  const bookTitleMap = useMemo(() => {
+    const map = new Map<string, string>();
+    books.forEach((book) => map.set(book.id, book.title));
+    return map;
+  }, [books]);
 
   const toggleSelection = useCallback((id: string) => {
     setSelectedIds((prev) => {
@@ -117,9 +128,10 @@ export function NoteList({
         isSelected={selectedIds.has(item.id)}
         selectionMode={selectionMode}
         index={index}
+        bookTitle={showBookTitle && item.bookId ? bookTitleMap.get(item.bookId) : undefined}
       />
     ),
-    [handlePress, handleLongPress, selectedIds, selectionMode]
+    [handlePress, handleLongPress, selectedIds, selectionMode, showBookTitle, bookTitleMap]
   );
 
   const keyExtractor = useCallback((item: Note) => item.id, []);
@@ -167,7 +179,7 @@ export function NoteList({
         </View>
       )}
 
-      <FlatList
+      <FlashList
         data={notes}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
@@ -175,10 +187,7 @@ export function NoteList({
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListHeaderComponent={ListHeaderComponent}
         showsVerticalScrollIndicator={false}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={5}
-        removeClippedSubviews={true}
+        estimatedItemSize={92}
       />
 
       {/* Selection actions */}

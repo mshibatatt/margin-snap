@@ -62,6 +62,11 @@ export function BookCard({ book, onPress, onLongPress }: BookCardProps) {
           <ThemedText style={styles.title} numberOfLines={2}>
             {book.title}
           </ThemedText>
+          {book.author && (
+            <ThemedText style={styles.author} numberOfLines={1}>
+              {book.author}
+            </ThemedText>
+          )}
           <View style={styles.meta}>
             <ThemedText style={styles.noteCount}>
               {book.noteCount}件のメモ
@@ -104,11 +109,15 @@ const styles = StyleSheet.create({
   },
   info: {
     flex: 1,
-    gap: 6,
+    gap: 4,
   },
   title: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  author: {
+    fontSize: 13,
+    opacity: 0.6,
   },
   meta: {
     flexDirection: 'row',

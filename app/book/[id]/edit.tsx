@@ -27,6 +27,7 @@ export default function EditBookScreen() {
 
   const [book, setBook] = useState<Book | null>(null);
   const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function EditBookScreen() {
       setBook(foundBook);
       if (foundBook) {
         setTitle(foundBook.title);
+        setAuthor(foundBook.author ?? '');
       }
     }
   }, [id]);
@@ -49,7 +51,10 @@ export default function EditBookScreen() {
 
     try {
       setIsSaving(true);
-      updateBook(book.id, { title: title.trim() });
+      updateBook(book.id, {
+        title: title.trim(),
+        author: author.trim() || null,
+      });
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       showSuccess('本を更新しました');
       router.back();
@@ -59,7 +64,7 @@ export default function EditBookScreen() {
     } finally {
       setIsSaving(false);
     }
-  }, [book, title, updateBook, router, showSuccess, showError]);
+  }, [book, title, author, updateBook, router, showSuccess, showError]);
 
   if (!book) {
     return (
@@ -71,7 +76,9 @@ export default function EditBookScreen() {
     );
   }
 
-  const hasChanges = title.trim() !== book.title;
+  const hasChanges =
+    title.trim() !== book.title ||
+    (author.trim() || null) !== book.author;
 
   return (
     <ThemedView style={styles.container}>
@@ -96,6 +103,25 @@ export default function EditBookScreen() {
               placeholder="本のタイトルを入力..."
               placeholderTextColor={Colors[colorScheme].icon}
               autoFocus
+              returnKeyType="next"
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <ThemedText style={styles.label}>著者（任意）</ThemedText>
+            <TextInput
+              style={[
+                styles.input,
+                {
+                  color: Colors[colorScheme].text,
+                  backgroundColor: Colors[colorScheme].background,
+                  borderColor: Colors[colorScheme].icon + '40',
+                },
+              ]}
+              value={author}
+              onChangeText={setAuthor}
+              placeholder="著者名を入力..."
+              placeholderTextColor={Colors[colorScheme].icon}
               returnKeyType="done"
               onSubmitEditing={handleSave}
             />
