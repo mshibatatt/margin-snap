@@ -22,6 +22,7 @@ function initializeDatabase(database: SQLite.SQLiteDatabase): void {
       id TEXT PRIMARY KEY NOT NULL,
       title TEXT NOT NULL,
       author TEXT,
+      volume TEXT,
       cover_uri TEXT,
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL

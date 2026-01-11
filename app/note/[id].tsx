@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,7 +7,7 @@ import {
   Alert,
   TextInput,
 } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
 import { Image } from 'expo-image';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
@@ -21,6 +21,7 @@ import { useNotes, useBooks, useToast } from '@/contexts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { findNoteById } from '@/db';
+import { getBookDisplayName } from '@/utils/bookDisplayName';
 import type { Note, EmotionStamp } from '@/types';
 
 export default function NoteDetailScreen() {
@@ -39,17 +40,20 @@ export default function NoteDetailScreen() {
   const [editMemo, setEditMemo] = useState('');
   const [editEmotionStamp, setEditEmotionStamp] = useState<EmotionStamp | null>(null);
 
-  useEffect(() => {
-    if (id) {
-      const foundNote = findNoteById(id);
-      setNote(foundNote);
-      if (foundNote) {
-        setEditPageNumber(foundNote.pageNumber?.toString() ?? '');
-        setEditMemo(foundNote.memo ?? '');
-        setEditEmotionStamp(foundNote.emotionStamp);
+  // Refresh note data when screen is focused (e.g., returning from book selection)
+  useFocusEffect(
+    useCallback(() => {
+      if (id) {
+        const foundNote = findNoteById(id);
+        setNote(foundNote);
+        if (foundNote) {
+          setEditPageNumber(foundNote.pageNumber?.toString() ?? '');
+          setEditMemo(foundNote.memo ?? '');
+          setEditEmotionStamp(foundNote.emotionStamp);
+        }
       }
-    }
-  }, [id]);
+    }, [id])
+  );
 
   const book = note?.bookId ? getBookById(note.bookId) : null;
 
@@ -254,7 +258,7 @@ export default function NoteDetailScreen() {
                 color={book ? Colors[colorScheme].tint : Colors[colorScheme].icon}
               />
               <ThemedText style={styles.bookText}>
-                {book ? book.title : '本に割り当てる'}
+                {book ? getBookDisplayName(book) : '本に割り当てる'}
               </ThemedText>
               <IconSymbol
                 name="chevron.right"

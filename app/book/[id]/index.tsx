@@ -9,6 +9,7 @@ import { useNotes, useBooks } from '@/contexts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { findBookById } from '@/db';
+import { getBookDisplayName } from '@/utils/bookDisplayName';
 import type { Book, DateFilter, EmotionStamp, SortOrder } from '@/types';
 
 export default function BookDetailScreen() {
@@ -123,7 +124,9 @@ export default function BookDetailScreen() {
     <View style={styles.header}>
       {/* Book info section for full title display */}
       <View style={styles.bookInfo}>
-        <ThemedText style={styles.bookTitle}>{book.title}</ThemedText>
+        <ThemedText style={styles.bookTitle}>
+          {getBookDisplayName(book)}
+        </ThemedText>
         {book.author && (
           <ThemedText style={styles.bookAuthor}>{book.author}</ThemedText>
         )}

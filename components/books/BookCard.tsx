@@ -9,6 +9,7 @@ import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { getBookDisplayName } from '@/utils/bookDisplayName';
 import type { BookWithNoteCount } from '@/types';
 
 interface BookCardProps {
@@ -60,7 +61,7 @@ export function BookCard({ book, onPress, onLongPress }: BookCardProps) {
         {/* Book info */}
         <View style={styles.info}>
           <ThemedText style={styles.title} numberOfLines={2}>
-            {book.title}
+            {getBookDisplayName(book)}
           </ThemedText>
           {book.author && (
             <ThemedText style={styles.author} numberOfLines={1}>

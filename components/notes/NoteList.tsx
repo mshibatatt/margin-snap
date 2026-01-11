@@ -16,6 +16,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useBooks } from '@/contexts';
 import { Colors } from '@/constants/theme';
+import { getBookDisplayName } from '@/utils/bookDisplayName';
 import type { Note } from '@/types';
 
 interface NoteListProps {
@@ -43,10 +44,10 @@ export function NoteList({
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  // Create a lookup map for book titles
-  const bookTitleMap = useMemo(() => {
+  // Create a lookup map for book display names
+  const bookDisplayNameMap = useMemo(() => {
     const map = new Map<string, string>();
-    books.forEach((book) => map.set(book.id, book.title));
+    books.forEach((book) => map.set(book.id, getBookDisplayName(book)));
     return map;
   }, [books]);
 
@@ -128,10 +129,10 @@ export function NoteList({
         isSelected={selectedIds.has(item.id)}
         selectionMode={selectionMode}
         index={index}
-        bookTitle={showBookTitle && item.bookId ? bookTitleMap.get(item.bookId) : undefined}
+        bookTitle={showBookTitle && item.bookId ? bookDisplayNameMap.get(item.bookId) : undefined}
       />
     ),
-    [handlePress, handleLongPress, selectedIds, selectionMode, showBookTitle, bookTitleMap]
+    [handlePress, handleLongPress, selectedIds, selectionMode, showBookTitle, bookDisplayNameMap]
   );
 
   const keyExtractor = useCallback((item: Note) => item.id, []);

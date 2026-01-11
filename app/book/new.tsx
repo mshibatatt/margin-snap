@@ -26,6 +26,7 @@ export default function NewBookScreen() {
 
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
+  const [volume, setVolume] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
   const noteIdArray = useMemo(
@@ -46,6 +47,7 @@ export default function NewBookScreen() {
       const book = createBook({
         title: title.trim(),
         author: author.trim() || null,
+        volume: volume.trim() || null,
       });
 
       // Assign notes if any
@@ -62,7 +64,7 @@ export default function NewBookScreen() {
     } finally {
       setIsCreating(false);
     }
-  }, [title, noteIdArray, createBook, assignToBook, router, showSuccess, showError]);
+  }, [title, author, volume, noteIdArray, createBook, assignToBook, router, showSuccess, showError]);
 
   return (
     <ThemedView style={styles.container}>
@@ -110,6 +112,25 @@ export default function NewBookScreen() {
               value={author}
               onChangeText={setAuthor}
               placeholder="著者名を入力..."
+              placeholderTextColor={Colors[colorScheme].icon}
+              returnKeyType="next"
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <ThemedText style={styles.label}>巻数（任意）</ThemedText>
+            <TextInput
+              style={[
+                styles.input,
+                {
+                  color: Colors[colorScheme].text,
+                  backgroundColor: Colors[colorScheme].background,
+                  borderColor: Colors[colorScheme].icon + '40',
+                },
+              ]}
+              value={volume}
+              onChangeText={setVolume}
+              placeholder="例: 1, 上, 前編..."
               placeholderTextColor={Colors[colorScheme].icon}
               returnKeyType="done"
               onSubmitEditing={handleCreate}

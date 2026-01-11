@@ -11,6 +11,7 @@ interface BookRow {
   id: string;
   title: string;
   author: string | null;
+  volume: string | null;
   cover_uri: string | null;
   created_at: number;
   updated_at: number;
@@ -25,6 +26,7 @@ function rowToBook(row: BookRow): Book {
     id: row.id,
     title: row.title,
     author: row.author,
+    volume: row.volume,
     coverUri: row.cover_uri,
     createdAt: new Date(row.created_at),
     updatedAt: new Date(row.updated_at),
@@ -47,17 +49,19 @@ export function createBook(input: CreateBookInput): Book {
   const id = generateId();
   const now = Date.now();
   const author = input.author?.trim() || null;
+  const volume = input.volume?.trim() || null;
 
   db.runSync(
-    `INSERT INTO books (id, title, author, cover_uri, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [id, input.title.trim(), author, input.coverUri ?? null, now, now]
+    `INSERT INTO books (id, title, author, volume, cover_uri, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [id, input.title.trim(), author, volume, input.coverUri ?? null, now, now]
   );
 
   return {
     id,
     title: input.title.trim(),
     author,
+    volume,
     coverUri: input.coverUri ?? null,
     createdAt: new Date(now),
     updatedAt: new Date(now),
@@ -96,6 +100,11 @@ export function updateBook(id: string, input: UpdateBookInput): Book {
   if (input.author !== undefined) {
     updates.push('author = ?');
     values.push(input.author?.trim() || null);
+  }
+
+  if (input.volume !== undefined) {
+    updates.push('volume = ?');
+    values.push(input.volume?.trim() || null);
   }
 
   if (input.coverUri !== undefined) {

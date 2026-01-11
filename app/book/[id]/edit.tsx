@@ -28,6 +28,7 @@ export default function EditBookScreen() {
   const [book, setBook] = useState<Book | null>(null);
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
+  const [volume, setVolume] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function EditBookScreen() {
       if (foundBook) {
         setTitle(foundBook.title);
         setAuthor(foundBook.author ?? '');
+        setVolume(foundBook.volume ?? '');
       }
     }
   }, [id]);
@@ -54,6 +56,7 @@ export default function EditBookScreen() {
       updateBook(book.id, {
         title: title.trim(),
         author: author.trim() || null,
+        volume: volume.trim() || null,
       });
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       showSuccess('本を更新しました');
@@ -64,7 +67,7 @@ export default function EditBookScreen() {
     } finally {
       setIsSaving(false);
     }
-  }, [book, title, author, updateBook, router, showSuccess, showError]);
+  }, [book, title, author, volume, updateBook, router, showSuccess, showError]);
 
   if (!book) {
     return (
@@ -78,7 +81,8 @@ export default function EditBookScreen() {
 
   const hasChanges =
     title.trim() !== book.title ||
-    (author.trim() || null) !== book.author;
+    (author.trim() || null) !== book.author ||
+    (volume.trim() || null) !== book.volume;
 
   return (
     <ThemedView style={styles.container}>
@@ -121,6 +125,25 @@ export default function EditBookScreen() {
               value={author}
               onChangeText={setAuthor}
               placeholder="著者名を入力..."
+              placeholderTextColor={Colors[colorScheme].icon}
+              returnKeyType="next"
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <ThemedText style={styles.label}>巻数（任意）</ThemedText>
+            <TextInput
+              style={[
+                styles.input,
+                {
+                  color: Colors[colorScheme].text,
+                  backgroundColor: Colors[colorScheme].background,
+                  borderColor: Colors[colorScheme].icon + '40',
+                },
+              ]}
+              value={volume}
+              onChangeText={setVolume}
+              placeholder="例: 1, 上, 前編..."
               placeholderTextColor={Colors[colorScheme].icon}
               returnKeyType="done"
               onSubmitEditing={handleSave}

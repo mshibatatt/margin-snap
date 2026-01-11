@@ -15,6 +15,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useNotes, useBooks } from '@/contexts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { getBookDisplayName } from '@/utils/bookDisplayName';
 import type { BookWithNoteCount } from '@/types';
 
 export default function BookSelectScreen() {
@@ -61,7 +62,7 @@ export default function BookSelectScreen() {
         )}
         <View style={styles.bookInfo}>
           <ThemedText style={styles.bookTitle} numberOfLines={1}>
-            {item.title}
+            {getBookDisplayName(item)}
           </ThemedText>
           <ThemedText style={styles.bookMeta}>{item.noteCount}件のメモ</ThemedText>
         </View>
