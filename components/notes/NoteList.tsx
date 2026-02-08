@@ -22,7 +22,10 @@ import type { Note } from '@/types';
 interface NoteListProps {
   notes: Note[];
   emptyMessage?: string;
+  emptyDescription?: string;
   emptyIcon?: string;
+  emptyActionLabel?: string;
+  onEmptyAction?: () => void;
   onDeleteNotes?: (ids: string[]) => void;
   onAssignToBook?: (ids: string[]) => void;
   ListHeaderComponent?: React.ReactElement;
@@ -33,7 +36,10 @@ interface NoteListProps {
 export function NoteList({
   notes,
   emptyMessage = 'メモがありません',
+  emptyDescription,
   emptyIcon = 'tray',
+  emptyActionLabel,
+  onEmptyAction,
   onDeleteNotes,
   onAssignToBook,
   ListHeaderComponent,
@@ -145,12 +151,31 @@ export function NoteList({
       <ThemedView style={styles.emptyContainer}>
         <View style={styles.emptyHeader}>{ListHeaderComponent}</View>
         <View style={styles.emptyContent}>
-          <IconSymbol
-            name={emptyIcon as any}
-            size={48}
-            color={Colors[colorScheme].icon}
-          />
+          <View
+            style={[
+              styles.emptyIconContainer,
+              { backgroundColor: Colors[colorScheme].icon + '15' },
+            ]}
+          >
+            <IconSymbol
+              name={emptyIcon as any}
+              size={48}
+              color={Colors[colorScheme].icon}
+            />
+          </View>
           <ThemedText style={styles.emptyText}>{emptyMessage}</ThemedText>
+          {emptyDescription && (
+            <ThemedText style={styles.emptyDescription}>{emptyDescription}</ThemedText>
+          )}
+          {emptyActionLabel && onEmptyAction && (
+            <TouchableOpacity
+              style={[styles.emptyActionButton, { backgroundColor: Colors[colorScheme].tint }]}
+              onPress={onEmptyAction}
+              activeOpacity={0.8}
+            >
+              <ThemedText style={styles.emptyActionButtonText}>{emptyActionLabel}</ThemedText>
+            </TouchableOpacity>
+          )}
         </View>
       </ThemedView>
     );
@@ -247,10 +272,34 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 20,
   },
+  emptyIconContainer: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   emptyText: {
-    fontSize: 16,
-    opacity: 0.5,
+    fontSize: 18,
+    fontWeight: '600',
     textAlign: 'center',
+  },
+  emptyDescription: {
+    fontSize: 14,
+    opacity: 0.6,
+    textAlign: 'center',
+  },
+  emptyActionButton: {
+    marginTop: 8,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 10,
+  },
+  emptyActionButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
   },
   listContent: {
     padding: 16,

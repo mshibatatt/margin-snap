@@ -100,17 +100,23 @@ export default function BooksScreen() {
     <ThemedView style={styles.container}>
       {books.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <IconSymbol name="book" size={48} color={Colors[colorScheme].icon} />
-          <ThemedText style={styles.emptyText}>本がまだありません</ThemedText>
+          <View
+            style={[
+              styles.emptyIconContainer,
+              { backgroundColor: Colors[colorScheme].icon + '15' },
+            ]}
+          >
+            <IconSymbol name="books.vertical" size={48} color={Colors[colorScheme].icon} />
+          </View>
+          <ThemedText style={styles.emptyText}>まだ本がありません</ThemedText>
           <ThemedText style={styles.emptySubtext}>
-            メモを整理するための本を作成しましょう
+            メモを整理するための本を追加しましょう
           </ThemedText>
           <TouchableOpacity
             style={[styles.emptyAddButton, { backgroundColor: Colors[colorScheme].tint }]}
             onPress={handleAddBook}
-            activeOpacity={0.7}
+            activeOpacity={0.8}
           >
-            <IconSymbol name="plus" size={20} color="#fff" />
             <ThemedText style={styles.emptyAddButtonText}>本を追加</ThemedText>
           </TouchableOpacity>
         </View>
@@ -160,10 +166,17 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 20,
   },
+  emptyIconContainer: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   emptyText: {
     fontSize: 18,
     fontWeight: '600',
-    marginTop: 8,
   },
   emptySubtext: {
     fontSize: 14,
@@ -171,17 +184,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   emptyAddButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
     borderRadius: 10,
-    marginTop: 12,
+    marginTop: 8,
   },
   emptyAddButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
   },
   listContent: {

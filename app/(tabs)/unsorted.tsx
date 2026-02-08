@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useRouter, useFocusEffect, router as globalRouter } from 'expo-router';
 
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
@@ -28,6 +28,12 @@ export default function UnsortedScreen() {
   const [dateFilter, setDateFilter] = useState<DateFilter>('all');
   const [emotionStamps, setEmotionStamps] = useState<EmotionStamp[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
+
+  // Check if there are any unsorted notes at all (before filtering)
+  const totalUnsortedNotes = useMemo(
+    () => notes.filter((note) => note.bookId === null).length,
+    [notes]
+  );
 
   // Filter notes to unsorted only
   const filteredNotes = useMemo(() => {
@@ -106,6 +112,10 @@ export default function UnsortedScreen() {
     [books, router]
   );
 
+  const handleGoToCapture = useCallback(() => {
+    globalRouter.navigate('/(tabs)');
+  }, []);
+
   if (isLoading) {
     return (
       <ThemedView style={styles.loadingContainer}>
@@ -137,8 +147,11 @@ export default function UnsortedScreen() {
     <ThemedView style={styles.container}>
       <NoteList
         notes={filteredNotes}
-        emptyMessage="未整理のメモはありません"
+        emptyMessage={totalUnsortedNotes === 0 ? 'まだメモがありません' : '未整理のメモはありません'}
+        emptyDescription={totalUnsortedNotes === 0 ? 'キャプチャタブでメモを作成しましょう' : undefined}
         emptyIcon="tray"
+        emptyActionLabel={totalUnsortedNotes === 0 ? 'メモを作成する' : undefined}
+        onEmptyAction={totalUnsortedNotes === 0 ? handleGoToCapture : undefined}
         onDeleteNotes={handleDeleteNotes}
         onAssignToBook={handleAssignToBook}
         ListHeaderComponent={ListHeader}
