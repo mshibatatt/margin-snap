@@ -4,6 +4,9 @@ import {
   View,
   TouchableOpacity,
   ActivityIndicator,
+  Modal,
+  Pressable,
+  Dimensions,
 } from 'react-native';
 import { CameraView as ExpoCameraView, useCameraPermissions } from 'expo-camera';
 import { Image } from 'expo-image';
@@ -30,6 +33,7 @@ export function CameraView({
   const cameraRef = useRef<ExpoCameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [isCapturing, setIsCapturing] = useState(false);
+  const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
 
   const handleTakePhoto = async () => {
     if (!cameraRef.current || isCapturing) return;
@@ -62,7 +66,16 @@ export function CameraView({
   if (photoUri) {
     return (
       <View style={styles.container}>
-        <Image source={{ uri: photoUri }} style={styles.preview} contentFit="cover" />
+        <TouchableOpacity
+          style={styles.preview}
+          onPress={() => setIsPhotoModalVisible(true)}
+          activeOpacity={0.9}
+        >
+          <Image source={{ uri: photoUri }} style={styles.previewImage} contentFit="cover" />
+          <View style={styles.expandHint}>
+            <IconSymbol name="arrow.up.left.and.arrow.down.right" size={14} color="#fff" />
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity
           style={[styles.retakeButton, { backgroundColor: Colors[colorScheme].background }]}
           onPress={handleRetake}
@@ -71,6 +84,33 @@ export function CameraView({
           <IconSymbol name="arrow.counterclockwise" size={20} color={Colors[colorScheme].text} />
           <ThemedText style={styles.retakeText}>撮り直す</ThemedText>
         </TouchableOpacity>
+
+        {/* Photo Modal */}
+        <Modal
+          visible={isPhotoModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setIsPhotoModalVisible(false)}
+        >
+          <Pressable
+            style={styles.modalOverlay}
+            onPress={() => setIsPhotoModalVisible(false)}
+          >
+            <View style={styles.modalContent}>
+              <Image
+                source={{ uri: photoUri }}
+                style={styles.modalPhoto}
+                contentFit="contain"
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setIsPhotoModalVisible(false)}
+            >
+              <IconSymbol name="xmark.circle.fill" size={32} color="#fff" />
+            </TouchableOpacity>
+          </Pressable>
+        </Modal>
       </View>
     );
   }
@@ -134,7 +174,7 @@ export function CameraView({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    aspectRatio: 3 / 4,
+    aspectRatio: 4 / 3,
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#000',
@@ -144,6 +184,35 @@ const styles = StyleSheet.create({
   },
   preview: {
     flex: 1,
+  },
+  previewImage: {
+    flex: 1,
+  },
+  expandHint: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 10,
+    padding: 5,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.95)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height * 0.8,
+  },
+  modalPhoto: {
+    flex: 1,
+  },
+  modalCloseButton: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
   },
   cameraOverlay: {
     flex: 1,

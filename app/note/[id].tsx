@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   Alert,
   TextInput,
+  Modal,
+  Pressable,
+  Dimensions,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
 import { Image } from 'expo-image';
@@ -35,6 +38,7 @@ export default function NoteDetailScreen() {
 
   const [note, setNote] = useState<Note | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
 
   // Edit form state
   const [editPageNumber, setEditPageNumber] = useState('');
@@ -172,14 +176,48 @@ export default function NoteDetailScreen() {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
         {/* Photo */}
         {note.photoUri && (
-          <View style={styles.photoContainer}>
+          <TouchableOpacity
+            style={styles.photoContainer}
+            onPress={() => setIsPhotoModalVisible(true)}
+            activeOpacity={0.9}
+          >
             <Image
               source={{ uri: note.photoUri }}
               style={styles.photo}
               contentFit="contain"
             />
-          </View>
+            <View style={styles.photoHint}>
+              <IconSymbol name="arrow.up.left.and.arrow.down.right" size={16} color="#fff" />
+            </View>
+          </TouchableOpacity>
         )}
+
+        {/* Photo Modal */}
+        <Modal
+          visible={isPhotoModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setIsPhotoModalVisible(false)}
+        >
+          <Pressable
+            style={styles.modalOverlay}
+            onPress={() => setIsPhotoModalVisible(false)}
+          >
+            <View style={styles.modalContent}>
+              <Image
+                source={{ uri: note.photoUri }}
+                style={styles.modalPhoto}
+                contentFit="contain"
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setIsPhotoModalVisible(false)}
+            >
+              <IconSymbol name="xmark.circle.fill" size={32} color="#fff" />
+            </TouchableOpacity>
+          </Pressable>
+        </Modal>
 
         {/* Page number */}
         <View style={styles.section}>
@@ -214,10 +252,12 @@ export default function NoteDetailScreen() {
               value={editEmotionStamp}
               onChange={setEditEmotionStamp}
             />
-          ) : (
+          ) : note.emotionStamp ? (
             <ThemedText style={styles.emotionStamp}>
-              {note.emotionStamp ?? '未設定'}
+              {note.emotionStamp}
             </ThemedText>
+          ) : (
+            <ThemedText style={styles.value}>未設定</ThemedText>
           )}
         </View>
 
@@ -372,6 +412,32 @@ const styles = StyleSheet.create({
   },
   photo: {
     flex: 1,
+  },
+  photoHint: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 12,
+    padding: 6,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.95)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height * 0.8,
+  },
+  modalPhoto: {
+    flex: 1,
+  },
+  modalCloseButton: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
   },
   section: {
     gap: 8,

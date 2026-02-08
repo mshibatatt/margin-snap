@@ -181,9 +181,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: Spacing.md,
-    paddingBottom: Spacing.md,
-    gap: Spacing.lg,
+    padding: Spacing.sm,
+    paddingBottom: Spacing.sm,
+    gap: Spacing.md,
   },
   cameraContainer: {
     alignItems: 'center',

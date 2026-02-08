@@ -46,23 +46,23 @@ export function MemoInput({
 
 const styles = StyleSheet.create({
   container: {
-    gap: 8,
+    gap: 4,
   },
   label: {
-    fontSize: 14,
+    fontSize: 12,
     opacity: 0.7,
     marginLeft: 4,
   },
   input: {
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    minHeight: 80,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 14,
+    minHeight: 56,
   },
   counter: {
-    fontSize: 12,
+    fontSize: 10,
     opacity: 0.5,
     textAlign: 'right',
     marginRight: 4,

@@ -59,28 +59,28 @@ export function EmotionStampPicker({ value, onChange }: EmotionStampPickerProps)
 
 const styles = StyleSheet.create({
   container: {
-    gap: 8,
+    gap: 6,
   },
   label: {
-    fontSize: 14,
+    fontSize: 12,
     opacity: 0.7,
     marginLeft: 4,
   },
   stamps: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 8,
+    gap: 6,
   },
   stamp: {
     flex: 1,
     aspectRatio: 1,
-    maxWidth: 60,
-    borderRadius: 12,
+    maxWidth: 48,
+    borderRadius: 10,
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
   stampText: {
-    fontSize: 28,
+    fontSize: 22,
   },
 });
