@@ -25,7 +25,9 @@ const MAPPING = {
   'tray.fill': 'file-tray-full',
   'book.fill': 'book',
   'book': 'book-outline',
+  'books.vertical.fill': 'library',
   'magnifyingglass': 'search',
+  'sparkles': 'sparkles',
 
   // Actions
   'plus': 'add',

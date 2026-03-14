@@ -34,7 +34,7 @@ const slides: WalkthroughSlide[] = [
     id: '2',
     icon: 'camera.fill',
     title: '写真かページ番号で記録',
-    description: '撮影またはページ番号を\n入力するだけ',
+    description: 'スタンプや一言メモも\n添えられます',
   },
   {
     id: '3',

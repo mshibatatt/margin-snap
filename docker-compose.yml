@@ -23,4 +23,6 @@ services:
       TERM: "xterm-256color"
       DISPLAY: ${DISPLAY}
       EXPO_DEVTOOLS_LISTEN_ADDRESS: "0.0.0.0"
+      REACT_NATIVE_PACKAGER_HOSTNAME: "0.0.0.0"
+      WDS_SOCKET_HOST: "0.0.0.0"
     tty: true

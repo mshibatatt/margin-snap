@@ -453,6 +453,7 @@ const styles = StyleSheet.create({
   },
   emotionStamp: {
     fontSize: 32,
+    lineHeight: 44,
   },
   input: {
     borderWidth: 1,

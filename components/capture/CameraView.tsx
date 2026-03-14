@@ -148,7 +148,7 @@ export function CameraView({
   // Camera view
   return (
     <View style={styles.container}>
-      <ExpoCameraView ref={cameraRef} style={styles.camera} facing="back">
+      <ExpoCameraView ref={cameraRef} style={styles.camera} facing="back" ratio="4:3">
         <View style={styles.cameraOverlay}>
           <TouchableOpacity
             style={[
@@ -173,11 +173,12 @@ export function CameraView({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    aspectRatio: 4 / 3,
+    width: '85%',
+    aspectRatio: 3 / 4,
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#000',
+    alignSelf: 'center',
   },
   camera: {
     flex: 1,
