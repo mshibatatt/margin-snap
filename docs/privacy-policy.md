@@ -4,7 +4,7 @@
 
 ## はじめに
 
-Margin Snap（以下「本アプリ」）は、ユーザーのプライバシーを尊重し、個人情報の保護に努めています。本プライバシーポリシーでは、本アプリにおける情報の取り扱いについて説明します。
+スナップ読書メモ（以下「本アプリ」）は、ユーザーのプライバシーを尊重し、個人情報の保護に努めています。本プライバシーポリシーでは、本アプリにおける情報の取り扱いについて説明します。
 
 ## 収集する情報
 
@@ -56,7 +56,7 @@ Last updated: March 14, 2026
 
 ## Introduction
 
-Margin Snap ("the App") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we handle information in the App.
+Snap Reading Memo (スナップ読書メモ, "the App") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we handle information in the App.
 
 ## Information We Collect
 
