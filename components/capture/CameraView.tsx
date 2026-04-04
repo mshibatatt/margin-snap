@@ -9,6 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { CameraView as ExpoCameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
 
@@ -60,6 +61,22 @@ export function CameraView({
   const handleRetake = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPhotoRemoved();
+  };
+
+  const handlePickImage = async () => {
+    try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]?.uri) {
+        onPhotoTaken(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Failed to pick image:', error);
+    }
   };
 
   // Show photo preview if we have a photo
@@ -150,21 +167,31 @@ export function CameraView({
     <View style={styles.container}>
       <ExpoCameraView ref={cameraRef} style={styles.camera} facing="back" ratio="4:3">
         <View style={styles.cameraOverlay}>
-          <TouchableOpacity
-            style={[
-              styles.captureButton,
-              isCapturing && styles.captureButtonDisabled,
-            ]}
-            onPress={handleTakePhoto}
-            disabled={isCapturing}
-            activeOpacity={0.7}
-          >
-            {isCapturing ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <View style={styles.captureButtonInner} />
-            )}
-          </TouchableOpacity>
+          <View style={styles.cameraButtons}>
+            <TouchableOpacity
+              style={styles.pickImageButton}
+              onPress={handlePickImage}
+              activeOpacity={0.7}
+            >
+              <IconSymbol name="photo.fill" size={24} color="#fff" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.captureButton,
+                isCapturing && styles.captureButtonDisabled,
+              ]}
+              onPress={handleTakePhoto}
+              disabled={isCapturing}
+              activeOpacity={0.7}
+            >
+              {isCapturing ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <View style={styles.captureButtonInner} />
+              )}
+            </TouchableOpacity>
+            <View style={styles.placeholderButton} />
+          </View>
         </View>
       </ExpoCameraView>
     </View>
@@ -220,6 +247,24 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     paddingBottom: 20,
+  },
+  cameraButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 32,
+  },
+  pickImageButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderButton: {
+    width: 44,
+    height: 44,
   },
   captureButton: {
     width: 72,
