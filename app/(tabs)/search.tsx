@@ -9,6 +9,7 @@ import { NoteList, FilterBar, SearchBar } from '@/components/notes';
 import { useNotes, useBooks } from '@/contexts';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { applySearchFilters, buildSearchScope } from '@/utils/noteFilters';
 import type { DateFilter, NoteStatusFilter, EmotionStamp, SortOrder } from '@/types';
 
 export default function SearchScreen() {
@@ -38,77 +39,20 @@ export default function SearchScreen() {
 
   // Filter and search notes
   const filteredNotes = useMemo(() => {
-    let result = [...notes];
-
-    // Apply search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      result = result.filter((note) => {
-        // Search in memo
-        if (note.memo && note.memo.toLowerCase().includes(query)) {
-          return true;
-        }
-        // Search in page number
-        if (note.pageNumber !== null && note.pageNumber.toString().includes(query)) {
-          return true;
-        }
-        // Search in book title and author
-        if (note.bookId) {
-          const bookInfo = bookSearchMap.get(note.bookId);
-          if (bookInfo) {
-            if (bookInfo.title.includes(query)) {
-              return true;
-            }
-            if (bookInfo.author && bookInfo.author.includes(query)) {
-              return true;
-            }
-          }
-        }
-        return false;
-      });
-    }
-
-    // Apply date filter
-    if (dateFilter !== 'all') {
-      const now = new Date();
-      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      let cutoff: Date;
-
-      switch (dateFilter) {
-        case 'today':
-          cutoff = startOfToday;
-          break;
-        case 'week':
-          cutoff = new Date(startOfToday.getTime() - 7 * 24 * 60 * 60 * 1000);
-          break;
-        case 'month':
-          cutoff = new Date(startOfToday.getTime() - 30 * 24 * 60 * 60 * 1000);
-          break;
-        default:
-          cutoff = new Date(0);
-      }
-
-      result = result.filter((note) => note.createdAt >= cutoff);
-    }
-
-    // Apply status filter
-    if (statusFilter !== 'all') {
-      if (statusFilter === 'unsorted') {
-        result = result.filter((note) => note.bookId === null);
-      } else if (statusFilter === 'sorted') {
-        result = result.filter((note) => note.bookId !== null);
-      }
-    }
-
-    // Apply emotion filter
-    if (emotionStamps.length > 0) {
-      result = result.filter(
-        (note) => note.emotionStamp && emotionStamps.includes(note.emotionStamp)
-      );
-    }
+    // Apply filters
+    const result = applySearchFilters(
+      notes,
+      {
+        query: searchQuery.trim() || undefined,
+        dateFilter,
+        statusFilter,
+        emotionStamps: emotionStamps.length > 0 ? emotionStamps : undefined,
+      },
+      bookSearchMap
+    );
 
     // Apply sort
-    result.sort((a, b) => {
+    return result.sort((a, b) => {
       switch (sortOrder) {
         case 'oldest':
           return a.createdAt.getTime() - b.createdAt.getTime();
@@ -122,8 +66,6 @@ export default function SearchScreen() {
           return b.createdAt.getTime() - a.createdAt.getTime();
       }
     });
-
-    return result;
   }, [notes, searchQuery, dateFilter, statusFilter, emotionStamps, sortOrder, bookSearchMap]);
 
   const handleDeleteNotes = useCallback(
@@ -152,6 +94,18 @@ export default function SearchScreen() {
     dateFilter !== 'all' ||
     statusFilter !== 'all' ||
     emotionStamps.length > 0;
+
+  // Build scope string for note detail navigation
+  const searchScope = useMemo(
+    () =>
+      buildSearchScope({
+        query: searchQuery.trim() || undefined,
+        dateFilter,
+        statusFilter,
+        emotionStamps: emotionStamps.length > 0 ? emotionStamps : undefined,
+      }),
+    [searchQuery, dateFilter, statusFilter, emotionStamps]
+  );
 
   if (isLoading) {
     return (
@@ -224,6 +178,7 @@ export default function SearchScreen() {
         ListHeaderComponent={ListHeader}
         showBookTitle
         onBookPress={handleBookPress}
+        scope={searchScope}
       />
     </ThemedView>
   );

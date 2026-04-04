@@ -31,6 +31,8 @@ interface NoteListProps {
   ListHeaderComponent?: React.ReactElement;
   showBookTitle?: boolean;
   onBookPress?: (bookId: string) => void;
+  /** Scope identifier for note detail navigation (e.g., "book:123" or "unsorted") */
+  scope?: string;
 }
 
 export function NoteList({
@@ -45,6 +47,7 @@ export function NoteList({
   ListHeaderComponent,
   showBookTitle = false,
   onBookPress,
+  scope,
 }: NoteListProps) {
   const colorScheme = useColorScheme() ?? 'light';
   const router = useRouter();
@@ -76,10 +79,11 @@ export function NoteList({
       if (selectionMode) {
         toggleSelection(note.id);
       } else {
-        router.push(`/note/${note.id}`);
+        const params = scope ? `?scope=${encodeURIComponent(scope)}` : '';
+        router.push(`/note/${note.id}${params}`);
       }
     },
-    [selectionMode, router, toggleSelection]
+    [selectionMode, router, toggleSelection, scope]
   );
 
   const handleLongPress = useCallback(

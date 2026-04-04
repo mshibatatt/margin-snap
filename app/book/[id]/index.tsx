@@ -169,6 +169,7 @@ export default function BookDetailScreen() {
         onDeleteNotes={handleDeleteNotes}
         onAssignToBook={handleAssignToBook}
         ListHeaderComponent={ListHeader}
+        scope={`book:${id}`}
       />
 
       {/* Floating capture button */}

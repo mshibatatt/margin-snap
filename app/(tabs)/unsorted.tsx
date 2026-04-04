@@ -155,6 +155,7 @@ export default function UnsortedScreen() {
         onDeleteNotes={handleDeleteNotes}
         onAssignToBook={handleAssignToBook}
         ListHeaderComponent={ListHeader}
+        scope="unsorted"
       />
     </ThemedView>
   );
