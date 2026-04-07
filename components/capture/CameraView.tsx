@@ -155,7 +155,7 @@ export function CameraView({
             onPress={requestPermission}
             activeOpacity={0.7}
           >
-            <ThemedText style={styles.permissionButtonText}>許可する</ThemedText>
+            <ThemedText style={styles.permissionButtonText}>はじめる</ThemedText>
           </TouchableOpacity>
         </View>
       </ThemedView>
